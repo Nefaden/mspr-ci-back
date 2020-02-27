@@ -2,22 +2,19 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Purchase } from 'src/purchases/purchase.entity';
 
 @Entity()
-export class Customer {
+export class Product {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
-  firstName: string;
+  name: string;
 
-  @Column()
-  lastName: string;
-
-  @Column()
-  email: string;
+  @Column({ type: 'numeric', precision: 6, scale: 3 })
+  price: number;
 
   @OneToMany(
     type => Purchase,
-    purchase => purchase.customer,
+    purchase => purchase.product,
   )
   purchases: Purchase[];
 }
