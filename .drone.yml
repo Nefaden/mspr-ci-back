@@ -13,6 +13,7 @@ pipeline:
       - npm install
 
   testing:
+<<<<<<< HEAD
     image: node:12.12.0
     group: testing
     commands:
@@ -35,3 +36,9 @@ pipeline:
     group: testing
     commands:  
       - npm run test:cov
+=======
+    image: node:8.6.0
+    group: testing
+    commands:
+      - npm run test
+>>>>>>> 1c54265deed187e3a38f3f5c85350fc89b5866a3
