@@ -1,0 +1,19 @@
+pipeline:
+  restore-cache:
+    image: drillster/drone-volume-cache
+    restore: true
+    mount:
+      - ./node_modules
+    volumes:
+      - /tmp/cache:/cache
+
+  install:
+    image: node:12.12.0
+    commands:
+      - npm install
+
+  testing:
+    image: node:8.6.0
+    group: testing
+    commands:
+      - npm run test
