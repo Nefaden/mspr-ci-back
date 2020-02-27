@@ -3,6 +3,9 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Customer } from './customers/customer.entity';
 import { CustomersModule } from './customers/customers.module';
+import { Product } from './products/product.entity';
+import { Purchase } from './purchases/purchase.entity';
+import { PurchasesModule } from './purchases/purchases.module';
 
 @Module({
   imports: [
@@ -15,10 +18,11 @@ import { CustomersModule } from './customers/customers.module';
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_NAME,
       schema: process.env.DATABASE_SCHEMA,
-      entities: [Customer],
+      entities: [Customer, Product, Purchase],
       synchronize: true,
     }),
     CustomersModule,
+    PurchasesModule,
   ],
 })
 export class AppModule {}
