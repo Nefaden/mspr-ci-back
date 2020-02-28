@@ -53,7 +53,9 @@ describe('Customers Service', () => {
       const customerId = 'd73426d4-e278-4d1a-b308-07997429c8c7';
       const customer: Customer = new Customer();
       const result: Purchase[] = [new Purchase(), new Purchase()];
-      jest.spyOn(customerRepository, 'findOneOrFail').mockResolvedValue(customer);
+      jest
+        .spyOn(customerRepository, 'findOneOrFail')
+        .mockResolvedValue(customer);
       jest.spyOn(purchaseRepository, 'find').mockResolvedValue(result);
 
       expect(await purchasesService.findAll(customerId)).toBe(result);
