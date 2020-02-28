@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { Purchase } from 'src/purchases/purchase.entity';
+import { Purchase } from '../purchases/purchase.entity';
 
 @Entity()
 export class Customer {
@@ -17,7 +17,7 @@ export class Customer {
 
   @OneToMany(
     type => Purchase,
-    purchase => purchase.customer,
+    purchase => purchase.customer
   )
   purchases: Purchase[];
 }

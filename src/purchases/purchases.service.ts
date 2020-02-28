@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Purchase } from './purchase.entity';
 import { Repository } from 'typeorm';
-import { Customer } from 'src/customers/customer.entity';
+import { Customer } from '../customers/customer.entity';
 
 @Injectable()
 export class PurchasesService {
@@ -10,7 +10,7 @@ export class PurchasesService {
     @InjectRepository(Purchase)
     private readonly purchaseRepository: Repository<Purchase>,
     @InjectRepository(Customer)
-    private readonly customerRepository: Repository<Customer>,
+    private readonly customerRepository: Repository<Customer>
   ) {}
 
   async findAll(customerId: string): Promise<Purchase[]> {

@@ -1,12 +1,6 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  RelationId,
-} from 'typeorm';
-import { Customer } from 'src/customers/customer.entity';
-import { Product } from 'src/products/product.entity';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Customer } from '../customers/customer.entity';
+import { Product } from '../products/product.entity';
 
 @Entity()
 export class Purchase {
@@ -23,8 +17,8 @@ export class Purchase {
     type => Customer,
     customer => customer.purchases,
     {
-      eager: true,
-    },
+      eager: true
+    }
   )
   customer: Customer;
 
@@ -32,8 +26,8 @@ export class Purchase {
     type => Product,
     product => product.purchases,
     {
-      eager: true,
-    },
+      eager: true
+    }
   )
   product: Product;
 }
