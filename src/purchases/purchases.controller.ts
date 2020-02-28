@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { PurchasesService } from './purchases.service';
 import { Purchase } from './purchase.entity';
 
@@ -7,7 +7,7 @@ export class PurchasesController {
   constructor(private readonly purchasesService: PurchasesService) {}
 
   @Get()
-  async findAll(): Promise<Purchase[]> {
-    return await this.purchasesService.findAll();
+  async findAll(@Query('customerId') customerId: string): Promise<Purchase[]> {
+    return await this.purchasesService.findAll(customerId);
   }
 }
