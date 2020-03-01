@@ -2,6 +2,7 @@ pipeline:
   restore-cache:
     image: drillster/drone-volume-cache
     restore: true
+    privileged: true
     mount:
       - ./node_modules
     volumes:
