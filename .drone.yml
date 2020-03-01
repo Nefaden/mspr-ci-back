@@ -5,7 +5,7 @@ pipeline:
     mount:
       - ./node_modules
     volumes:
-      - /tmp/cache:/cache
+      - /var/lib/drone:/data
 
   install:
     image: node:12.12.0
