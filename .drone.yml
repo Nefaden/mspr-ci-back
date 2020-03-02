@@ -19,15 +19,15 @@ pipeline:
         - npm run build
 
   build-image:
-    image: docker:19.03.1
+    image: docker:19.03.5
     variables:
         DOCKER_DRIVER: overlay2
         DOCKER_TLS_CERTDIR: ''
     services:
-        - docker:19.03.1-dind
+        - docker:19.03.5-dind
     commands:
-        - sudo docker build -t aya-market-back:0.0.1 .
-        - sudo docker build -t registry.gitlab.com/mspr-ci1/mspr-ci-back .
+        - docker build -t aya-market-back:0.0.1 .
+        - docker build -t registry.gitlab.com/mspr-ci1/mspr-ci-back .
     artifacts:
         paths:
         - Dockerfile
