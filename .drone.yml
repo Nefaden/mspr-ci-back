@@ -1,4 +1,5 @@
 pipeline:
+name: CI-Back
   restore-cache:
     image: drillster/drone-volume-cache
     restore: true
@@ -26,8 +27,8 @@ pipeline:
     services:
         - docker:19.03.1-dind
     commands:
-        - docker build -t aya-market-back:0.0.1 .
-        - docker build -t registry.gitlab.com/mspr-ci1/mspr-ci-back .
+        - sudo docker build -t aya-market-back:0.0.1 .
+        - sudo docker build -t registry.gitlab.com/mspr-ci1/mspr-ci-back .
     artifacts:
         paths:
         - Dockerfile
