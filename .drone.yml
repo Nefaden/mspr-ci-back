@@ -21,6 +21,7 @@ pipeline:
   kaniko:
     image: banzaicloud/drone-kaniko
     settings:
+      registry: registry.gitlab.com/mspr-ci1/mspr-ci-back
       username: $DOCKER_USERNAME
       password: $DOCKER_PASSWORD
       repo: mspr-ci-back
