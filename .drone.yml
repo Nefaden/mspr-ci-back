@@ -1,5 +1,9 @@
-pipeline:
-  restore-cache:
+kind: pipeline
+type: docker
+name: default
+
+steps:
+- name: estore-cache
     image: drillster/drone-volume-cache
     restore: true
     mount:
@@ -7,18 +11,18 @@ pipeline:
     volumes:
       - /var/lib/drone:/data
 
-  install:
+- name: install
     image: node:12.12.0
     commands:
       - npm install
 
-  build:
+- name: build
     image: node:12.12.0
     commands:
         - npm run prebuild
         - npm run build
-
-  kaniko:
+  
+- name: kaniko
     image: banzaicloud/drone-kaniko
     settings:
       registry: registry.gitlab.com/mspr-ci1/mspr-ci-back
@@ -27,19 +31,19 @@ pipeline:
       repo: mspr-ci-back
       tags: latest
 
-  testing:
+- name: testing
     image: node:12.12.0
     group: testing
     commands:
       - npm run test
 
-  lint:
+- name: lint
     image: node:12.12.0
     group: testing
     commands:
       - npm run lint
 
-  coverage:
+- name: coverage
     image: node:12.12.0
     group: testing
     commands:  
