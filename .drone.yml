@@ -42,3 +42,20 @@ steps:
     group: testing
     commands:  
       - npm run test:cov
+
+  - name: deploy
+    image: caprover/cli-caprover:latest
+    commands:
+      #- git checkout -b release-${DRONE_TAG}
+      - npx caprover deploy -h $CAPROVER_DOMAIN -p $CAPROVER_PASSWORD -a $CAPROVER_APPNAME
+      #Add -b release-${DRONE_TAG} to push and deploy on tag
+    environment:
+      CAPROVER_DOMAIN:
+        from_secret: CAPROVER_DOMAIN
+      CAPROVER_APPNAME:
+        from_secret: CAPROVER_APPNAME
+      CAPROVER_PASSWORD:
+        from_secret: CAPROVER_PASSWORD
+    depends_on: [format, test_e2e, build]
+    #when:
+    #  event: tag
