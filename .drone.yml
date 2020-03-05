@@ -17,9 +17,13 @@ steps:
   - name: kaniko
     image: banzaicloud/drone-kaniko
     settings:
-      registry: registry.gitlab.com/mspr-ci1
-      username: $DOCKER_USERNAME
-      password: $DOCKER_PASSWORD
+      environment:
+        REGISTRY: 
+          from_secret: REGISTRY
+        USERNAME:
+          from_secret: DOCKER_USERNAME
+        TOKEN: 
+          from_secret: DOCKER_TOKEN
       repo: mspr-ci-back
       tags: latest
 
