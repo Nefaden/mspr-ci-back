@@ -19,7 +19,7 @@ steps:
     settings:
       username:
         from_secret: DOCKER_USERNAME
-      token: 
+      password: 
         from_secret: DOCKER_TOKEN
       registry: registry.gitlab.com
       repo: mspr-ci1/mspr-ci-back
