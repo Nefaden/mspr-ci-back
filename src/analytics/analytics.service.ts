@@ -14,7 +14,9 @@ export class AnalyticsService {
   async getAnalytics(year: number): Promise<Analytics> {
     return {
       year: year,
-      turnover: await this.getTurnover(year)
+      turnover: await this.getTurnover(year).catch(() => {
+        throw new BadRequestException();
+      })
     };
   }
 
@@ -29,13 +31,9 @@ export class AnalyticsService {
     return +total.toFixed(3);
   }
 
-  private async getPurchasesByYear(year: number) {
-    return this.purchaseRepository
-      .find({
-        date: Raw(alias => `extract(year from ${alias}) = ${year}`)
-      })
-      .catch(() => {
-        throw new BadRequestException();
-      });
+  private async getPurchasesByYear(year: number): Promise<Purchase[]> {
+    return this.purchaseRepository.find({
+      date: Raw(alias => `extract(year from ${alias}) = ${year}`)
+    });
   }
 }
