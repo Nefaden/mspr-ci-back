@@ -6,6 +6,7 @@ import { CustomersModule } from './customers/customers.module';
 import { Product } from './products/product.entity';
 import { Purchase } from './purchases/purchase.entity';
 import { PurchasesModule } from './purchases/purchases.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { PurchasesModule } from './purchases/purchases.module';
       entities: [Customer, Product, Purchase],
       synchronize: true,
     }),
+    AnalyticsModule,
     CustomersModule,
     PurchasesModule,
   ],

@@ -4,10 +4,10 @@ import { CustomersService } from './customers.service';
 
 @Controller('customers')
 export class CustomersController {
-    constructor(private readonly customersService: CustomersService) {}
+  constructor(private readonly customersService: CustomersService) {}
 
-    @Get()
-    async findAll(): Promise<Customer[]> {
-        return await this.customersService.findAll();
-      }
+  @Get()
+  async findAll(): Promise<Customer[]> {
+    return await this.customersService.findAll();
+  }
 }

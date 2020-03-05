@@ -42,9 +42,7 @@ describe('Customers Controller', () => {
 
       expect(await purchasesController.findAll(customerId)).toBe(result);
     });
-  });
 
-  describe('findAll', () => {
     it("should return customers' purchases", async () => {
       const customerId = 'd73426d4-e278-4d1a-b308-07997429c8c7';
       const result: Purchase[] = [new Purchase(), new Purchase()];
@@ -53,4 +51,5 @@ describe('Customers Controller', () => {
       expect(await purchasesController.findAll(customerId)).toBe(result);
     });
   });
+
 });
