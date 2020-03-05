@@ -18,13 +18,12 @@ steps:
     image: banzaicloud/drone-kaniko
     settings:
       environment:
-        REGISTRY: 
-          from_secret: REGISTRY
-        USERNAME:
+        username:
           from_secret: DOCKER_USERNAME
-        TOKEN: 
+        token: 
           from_secret: DOCKER_TOKEN
-      repo: mspr-ci-back
+      registry: registry.gitlab.com
+      repo: nefaden/mspr-ci1/mspr-ci-back
       tags: latest
 
   - name: testing
