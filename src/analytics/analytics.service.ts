@@ -1,8 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Raw, Repository } from 'typeorm';
 import { Purchase } from '../purchases/purchase.entity';
 import { Analytics } from './analytics.interface';
+import { GetAnalyticsParams } from './params/analytics.param';
 
 @Injectable()
 export class AnalyticsService {
@@ -11,12 +12,10 @@ export class AnalyticsService {
     private readonly purchaseRepository: Repository<Purchase>
   ) {}
 
-  async getAnalytics(year: number): Promise<Analytics> {
+  async getAnalytics(params: GetAnalyticsParams): Promise<Analytics> {
     return {
-      year: year,
-      turnover: await this.getTurnover(year).catch(() => {
-        throw new BadRequestException();
-      })
+      year: params.year,
+      turnover: await this.getTurnover(params.year)
     };
   }
 
