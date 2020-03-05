@@ -5,7 +5,7 @@ import { Purchase } from '../purchases/purchase.entity';
 import { AnalyticsController } from './analytics.controller';
 import { Analytics } from './analytics.interface';
 import { AnalyticsService } from './analytics.service';
-import { BadRequestException } from '@nestjs/common';
+import { GetAnalyticsParams } from './params/analytics.param';
 
 describe('Analytics Controller', () => {
   let analyticsController: AnalyticsController;
@@ -33,34 +33,14 @@ describe('Analytics Controller', () => {
 
   describe('getAnalytics', () => {
     it('should return analytics', async () => {
-      const year = 2020;
+      const params: GetAnalyticsParams = { year: 2020 };
       const result: Analytics = {
-        year: year,
+        year: params.year,
         turnover: 123.45
       };
       jest.spyOn(analyticsService, 'getAnalytics').mockResolvedValue(result);
 
-      expect(await analyticsController.getAnalytics(year)).toBe(result);
-    });
-
-    it('should throw a BadRequestException', async done => {
-      const year = 'test';
-      jest.spyOn(analyticsService, 'getAnalytics').mockImplementation(() => {
-        throw new BadRequestException();
-      });
-
-      await analyticsController
-        .getAnalytics(year)
-        .then(() =>
-          done.fail(
-            'Client controller should return BadRequestException error of 400 but did not'
-          )
-        )
-        .catch(error => {
-          expect(error.status).toBe(400);
-          expect(error.message.error).toBe('Bad Request');
-          done();
-        });
+      expect(await analyticsController.getAnalytics(params)).toBe(result);
     });
   });
 });
