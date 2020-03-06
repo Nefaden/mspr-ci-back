@@ -47,7 +47,7 @@ steps:
     image: caprover/cli-caprover:latest
     commands:
       #- git checkout -b release-${DRONE_TAG}
-      - npx caprover deploy -h $CAPROVER_DOMAIN -p $CAPROVER_PASSWORD -a $CAPROVER_APPNAME -b feature/ci
+      - npx caprover deploy -h $CAPROVER_DOMAIN -p $CAPROVER_PASSWORD -a $CAPROVER_APPNAME -b master
       #Add -b release-${DRONE_TAG} to push and deploy on tag
     environment:
       CAPROVER_DOMAIN:
