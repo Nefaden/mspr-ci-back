@@ -1,6 +1,6 @@
 FROM node:8-alpine
 
-WORKDIR /
+WORKDIR /app
 
 ADD package.json /app/package.json
 
@@ -8,8 +8,8 @@ RUN npm config set registry http://registry.npmjs.org
 
 RUN npm install
 
-ADD . /
+ADD . /app
 
 EXPOSE 3000
 
-CMD ["npm", "run", "start:prod"]
+CMD ["npm", "run", "start"]
