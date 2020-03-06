@@ -60,15 +60,14 @@ steps:
     #when:
     #  event: tag 
 
-
-- name: send
-  image: plugins/webhook
-  settings:
-    urls: DISCORD_WEBHOOK
-    content_type: application/json
-    template: |
-      {
-        "owner": "{{ repo.owner }}",
-        "repo": "{{ repo.name }}",
-        "status": "{{ build.status }}",
-      }
+  - name: send
+    image: plugins/webhook
+    settings:
+      urls: DISCORD_WEBHOOK
+      content_type: application/json
+      template: |
+        {
+          "owner": "{{ repo.owner }}",
+          "repo": "{{ repo.name }}",
+          "status": "{{ build.status }}",
+        }
