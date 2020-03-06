@@ -23,7 +23,7 @@ steps:
         from_secret: DOCKER_TOKEN
       registry: registry.gitlab.com
       repo: mspr-ci1/mspr-ci-back
-      tags: latest
+      tags: 0.0.1
 
   - name: testing
     image: node:12.12.0
