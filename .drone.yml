@@ -12,6 +12,7 @@ steps:
     image: node:12.12.0
     commands:
       - typedoc --out docs src
+    depends_on: [install]
 
   - name: build
     image: node:12.12.0
