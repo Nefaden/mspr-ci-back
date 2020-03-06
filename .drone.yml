@@ -43,17 +43,17 @@ steps:
     commands:  
       - npm run test:cov
 
-  - name: send
-    image: plugins/webhook
+  - name: discord notification
+    image: appleboy/drone-discord
     settings:
-      urls: DISCORD_WEBHOOK
-      content_type: application/json
-      template: |
-        {
-          "owner": "{{ repo.owner }}",
-          "repo": "{{ repo.name }}",
-          "status": "{{ build.status }}",
-        }
+      webhook_id: DISCORD_WEBHOOK_ID
+      webhook_token: DISCORD_WEBHOOK_TOKEN
+      message: >
+        {{#success build.status}}
+          Build {{build.number}} succeeded. Good job.
+        {{else}}
+          Build {{build.number}} failed. Fix me please.
+        {{/success}}
 
   - name: deploy
     image: caprover/cli-caprover:latest
