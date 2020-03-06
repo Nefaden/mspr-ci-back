@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Raw, Repository } from 'typeorm';
 import { Purchase } from '../purchases/purchase.entity';
-import { Analytics } from './analytics.interface';
+import { Analytics } from './analytics.class';
 import { GetAnalyticsParams } from './params/analytics.param';
 
 @Injectable()

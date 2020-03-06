@@ -3,7 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Purchase } from '../purchases/purchase.entity';
 import { AnalyticsController } from './analytics.controller';
-import { Analytics } from './analytics.interface';
+import { Analytics } from './analytics.class';
 import { AnalyticsService } from './analytics.service';
 import { GetAnalyticsParams } from './params/analytics.param';
 
