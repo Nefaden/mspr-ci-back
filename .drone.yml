@@ -19,6 +19,7 @@ steps:
     commands:
         - npm run prebuild
         - npm run build
+    depends_on: [doc]
     
   - name: kaniko
     image: banzaicloud/drone-kaniko
@@ -30,30 +31,34 @@ steps:
       registry: registry.gitlab.com
       repo: mspr-ci1/mspr-ci-back
       tags: 0.0.1
+    depends_on: [build]
 
   - name: testing
     image: node:12.12.0
     group: testing
     commands:
       - npm run test
+    depends_on: [kaniko]
 
   - name: lint
     image: node:12.12.0
     group: testing
     commands:
       - npm run lint
+    depends_on: [kaniko]
 
   - name: coverage
     image: node:12.12.0
     group: testing
     commands:  
       - npm run test:cov
+    depends_on: [kaniko]
 
   - name: deploy
     image: caprover/cli-caprover:latest
     commands:
       #- git checkout -b release-${DRONE_TAG}
-      - npx caprover deploy -h $CAPROVER_DOMAIN -p $CAPROVER_PASSWORD -a $CAPROVER_APPNAME -b master
+      - npx caprover deploy -h $CAPROVER_DOMAIN -p $CAPROVER_PASSWORD -a $CAPROVER_APPNAME -b documentation/tech-doc
       #Add -b release-${DRONE_TAG} to push and deploy on tag
     environment:
       CAPROVER_DOMAIN:
