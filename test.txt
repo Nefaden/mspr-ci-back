@@ -1,0 +1,7 @@
+
+
+  e2e:
+    image: node:12.12.0
+    group: testing
+    commands:
+      - npm run test:e2e
