@@ -43,6 +43,18 @@ steps:
     commands:  
       - npm run test:cov
 
+  - name: send
+    image: plugins/webhook
+    settings:
+      urls: DISCORD_WEBHOOK
+      content_type: application/json
+      template: |
+        {
+          "owner": "{{ repo.owner }}",
+          "repo": "{{ repo.name }}",
+          "status": "{{ build.status }}",
+        }
+
   - name: deploy
     image: caprover/cli-caprover:latest
     commands:
@@ -59,15 +71,3 @@ steps:
     #depends_on: [format, test_e2e, build]
     #when:
     #  event: tag 
-
-  - name: send
-    image: plugins/webhook
-    settings:
-      urls: DISCORD_WEBHOOK
-      content_type: application/json
-      template: |
-        {
-          "owner": "{{ repo.owner }}",
-          "repo": "{{ repo.name }}",
-          "status": "{{ build.status }}",
-        }
