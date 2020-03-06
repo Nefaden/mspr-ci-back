@@ -46,8 +46,10 @@ steps:
   - name: discord notification
     image: appleboy/drone-discord
     settings:
-      webhook_id: DISCORD_WEBHOOK_ID
-      webhook_token: DISCORD_WEBHOOK_TOKEN
+      webhook_id: 
+        from_secret: DISCORD_WEBHOOK_ID
+      webhook_token: 
+        from_secret: DISCORD_WEBHOOK_TOKEN
       message: >
         {{#success build.status}}
           Build {{build.number}} succeeded. Good job.
