@@ -65,7 +65,8 @@ kind: pipeline
 name: notifications
 
 steps:
-  - name: discord notification
+  - name: discord
+    pull: always
     image: appleboy/drone-discord
     settings:
       webhook_id:
