@@ -10,6 +10,8 @@ RUN npm install
 
 ADD . /
 
+RUN npm run prebuild
+
 RUN npm run build
 
 EXPOSE 3000
