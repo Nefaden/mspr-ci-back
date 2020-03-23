@@ -36,10 +36,10 @@ steps:
       #-  VERSION=$(git describe --abbrev=0 --tag | tr -d '\n')
       - git config --global http.sslverify false
       - git clone git@gitlab.com:mspr-ci1/mspr-ci-back-doc.git
-      - rm -rf doc-git/docs
-      - mv docs/ doc-git/
-      - cd doc-git
-      - git add .
+      - rm -rf mspr-ci-back-doc/docs
+      - mv docs/ mspr-ci-back-doc/
+      - cd mspr-ci-back-doc/
+      - git add docs
       - git commit -m "Update doc"
       #- git tag $VERSION
       - git log
