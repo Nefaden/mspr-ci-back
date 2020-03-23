@@ -25,7 +25,7 @@ steps:
       - npm run doc
       #- git fetch --tags
       #-  VERSION=$(git describe --abbrev=0 --tag | tr -d '\n')
-      - git clone https://gitlab.com/mspr-ci1/mspr-ci-back-doc.git doc-git
+      - git clone $DOC_REPOSITORY_URL doc-git
       - rm -rf doc-git/docs
       - mv docs/ doc-git/
       - cd doc-git
@@ -35,6 +35,13 @@ steps:
       - git log
       - git push
       #- git push origin --tags
+    environment:
+      DOC_REPOSITORY_URL:
+        from_secret: DOC_REPOSITORY_URL
+      USERNAME:
+        from_secret: DOCKER_USERNAME
+      PASSWORD: 
+        from_secret: DOCKER_TOKEN
     depends_on: [restore-cache]
     
   - name: kaniko
