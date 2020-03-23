@@ -40,9 +40,9 @@ steps:
         from_secret: DOC_REPOSITORY_URL
       SSH_KEY:
         from_secret: AYA_SSH_KEY
-      username:
+      Username:
         from_secret: DOCKER_USERNAME
-      password: 
+      Password: 
         from_secret: DOCKER_TOKEN
     depends_on: [restore-cache]
     
