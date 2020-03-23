@@ -1,20 +1,18 @@
 FROM node:8-alpine
 
-WORKDIR /app
+WORKDIR /
 
-ADD package.json /app/package.json
+ADD package.json /package.json
 
 RUN npm config set registry http://registry.npmjs.org
 
 RUN npm install
 
-ADD . /app
-
-CMD ["cd", "../"]
-
 RUN npm run prebuild
 
 RUN npm run build
+
+ADD . /
 
 EXPOSE 3000
 

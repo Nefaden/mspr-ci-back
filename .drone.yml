@@ -3,6 +3,16 @@ type: docker
 name: default
 
 steps:
+  - name: restore-cache
+    image: drillster/drone-volume-cache
+    volumes:
+    - name: cache
+      path: /cache
+    settings:
+      restore: true
+      mount:
+        - ./node_modules
+
   - name: install
     image: node:12.16.1
     commands:
