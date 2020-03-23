@@ -21,7 +21,7 @@ export class Purchase {
 
   @ApiProperty({
     example: '2020-03-05 17:58:12',
-    description: 'Purchase\'s UUID.'
+    description: 'Purchase\'s date.'
   })
   @Column()
   date: Date;

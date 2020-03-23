@@ -8,8 +8,12 @@ RUN npm config set registry http://registry.npmjs.org
 
 RUN npm install
 
+RUN npm run prebuild
+
+RUN npm run build
+
 ADD . /app
 
 EXPOSE 3000
 
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "start:prod"]
