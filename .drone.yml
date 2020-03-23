@@ -3,6 +3,7 @@
   echo $SSH_KEY > ~/.ssh/id_rsa
   chmod 600 ~/.ssh/id_rsa
   ssh-keyscan -t rsa gitlab.com >> ~/.ssh/known_hosts
+  ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=accept-new
 
 kind: pipeline
 type: docker
