@@ -1,6 +1,6 @@
 FROM node:8-alpine
 
-WORKDIR /app
+WORKDIR /
 
 ADD package.json /app/package.json
 
@@ -12,7 +12,7 @@ RUN npm run prebuild
 
 RUN npm run build
 
-ADD . /app
+ADD . /
 
 EXPOSE 3000
 
