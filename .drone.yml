@@ -56,6 +56,9 @@ steps:
         from_secret: CAPROVER_APPNAME
       CAPROVER_PASSWORD:
         from_secret: CAPROVER_PASSWORD
+    when:
+      branch:
+      - master
     #depends_on: [format, test_e2e, build]
     #when:
     #  event: tag
@@ -71,6 +74,3 @@ steps:
 
     when:
       status: [ success, failure ]
-
-    #depends_on:
-    #  - default
