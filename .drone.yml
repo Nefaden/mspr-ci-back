@@ -25,7 +25,7 @@ steps:
       - npm run doc
       #- git fetch --tags
       #-  VERSION=$(git describe --abbrev=0 --tag | tr -d '\n')
-      - git clone $DOC_REPOSITORY_URL doc-git
+      - git clone https://gitlab.com/mspr-ci1/mspr-ci-back-doc.git doc-git
       - rm -rf doc-git/docs
       - mv docs/ doc-git/
       - cd doc-git
