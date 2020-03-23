@@ -25,7 +25,7 @@ steps:
       - npm run doc
       #- git fetch --tags
       #-  VERSION=$(git describe --abbrev=0 --tag | tr -d '\n')
-      - ssh-keyscan -t rsa gitlab.com >> ~/.ssh/known_hosts
+      - git config --global http.sslverify false
       - git clone $DOC_REPOSITORY_URL doc-git
       - rm -rf doc-git/docs
       - mv docs/ doc-git/
