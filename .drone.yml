@@ -23,6 +23,18 @@ steps:
     image: node:12.16.1
     commands:
       - npm run doc
+      - git fetch --tags
+      - VERSION=$(git describe --abbrev=0 --tag | tr -d '\n')
+      - git clone $DOC_REPOSITORY_URL doc-back
+      - rm -rf doc-back/docs
+      - mv docs/ doc-back/
+      - cd doc-back
+      - git add .
+      - git commit -m "Update doc $VERSION"
+      - git tag $VERSION
+      - git log
+      - git push
+      - git push origin --tags
     depends_on: [restore-cache]
     
   - name: kaniko
