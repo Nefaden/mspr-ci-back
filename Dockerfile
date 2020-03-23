@@ -8,11 +8,11 @@ RUN npm config set registry http://registry.npmjs.org
 
 RUN npm install
 
+ADD . /
+
 RUN npm run prebuild
 
 RUN npm run build
-
-ADD . /
 
 EXPOSE 3000
 

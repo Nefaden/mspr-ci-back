@@ -3,6 +3,11 @@ type: docker
 name: default
 
 steps:
+  - name: install
+    image: node:12.16.1
+    commands:
+      - npm install
+
   - name: restore-cache
     image: drillster/drone-volume-cache
     volumes:
@@ -12,17 +17,13 @@ steps:
       restore: true
       mount:
         - ./node_modules
-
-  - name: install
-    image: node:12.16.1
-    commands:
-      - npm install
+    depends_on: [install]
 
   - name: doc
     image: node:12.16.1
     commands:
       - npm run doc
-    depends_on: [install]
+    depends_on: [restore-cache]
     
   - name: kaniko
     image: banzaicloud/drone-kaniko
