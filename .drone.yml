@@ -25,10 +25,10 @@ steps:
       - npm run doc
       #- git fetch --tags
       #-  VERSION=$(git describe --abbrev=0 --tag | tr -d '\n')
-      - git clone $DOC_REPOSITORY_URL mspr-ci-back-doc
-      - rm -rf mspr-ci-back-doc/docs
-      - mv docs/ mspr-ci-back-doc/
-      - cd mspr-ci-back-doc
+      - git clone $DOC_REPOSITORY_URL doc-git
+      - rm -rf doc-git/docs
+      - mv docs/ doc-git/
+      - cd doc-git
       - git add .
       - git commit -m "Update doc"
       #- git tag $VERSION
