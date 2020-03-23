@@ -35,7 +35,7 @@ steps:
       #- git fetch --tags
       #-  VERSION=$(git describe --abbrev=0 --tag | tr -d '\n')
       - git config --global http.sslverify false
-      - git clone $DOC_REPOSITORY_URL -i  ~/.ssh/id_rsa 
+      - git clone git@gitlab.com:mspr-ci1/mspr-ci-back-doc.git -i  ~/.ssh/id_rsa 
       - rm -rf doc-git/docs
       - mv docs/ doc-git/
       - cd doc-git
