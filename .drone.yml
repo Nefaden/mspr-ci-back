@@ -46,7 +46,7 @@ steps:
       DOC_REPOSITORY_URL:
         from_secret: DOC_REPOSITORY_URL
       SSH_KEY:
-        from_secret: SSH_KEY
+        from_secret: AYA_SSH_KEY
     depends_on: [restore-cache]
     
   - name: kaniko
