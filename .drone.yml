@@ -33,7 +33,7 @@ steps:
       - git commit -m "Update doc"
       #- git tag $VERSION
       - git log
-      - git push '$DOC_REPOSITORY_URL' --all
+      - git push '$DOC_REPOSITORY_URL' --all 
       #- git push origin --tags
     environment:
       DOC_REPOSITORY_URL:
