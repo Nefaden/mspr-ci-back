@@ -27,27 +27,27 @@ steps:
   depends_on: [restore-cache]
 
   - name: rebuild-cache
-    image: drillster/drone-volume-cache
-    volumes:
-    - name: cache
-      path: /cache
-    settings:
-      rebuild: true
-      mount:
-        - ./node_modules
-    depends_on: [install]
-    
-  - name: kaniko
-    image: banzaicloud/drone-kaniko
-    settings:
-      username:
-        from_secret: DOCKER_USERNAME
-      password:
-        from_secret: DOCKER_TOKEN
-      registry: registry.gitlab.com
-      repo: mspr-ci1/mspr-ci-back
-      tags: 0.0.1
-    depends_on: [rebuild-cache]
+  image: drillster/drone-volume-cache
+  volumes:
+  - name: cache
+    path: /cache
+  settings:
+    rebuild: true
+    mount:
+      - ./node_modules
+  depends_on: [install]
+  
+- name: kaniko
+  image: banzaicloud/drone-kaniko
+  settings:
+    username:
+      from_secret: DOCKER_USERNAME
+    password:
+      from_secret: DOCKER_TOKEN
+    registry: registry.gitlab.com
+    repo: mspr-ci1/mspr-ci-back
+    tags: 0.0.1
+  depends_on: [rebuild-cache]
 
 - name: testing
   image: node:12.16.1
@@ -63,42 +63,29 @@ steps:
     - npm run lint
   depends_on: [kaniko]
 
-  - name: coverage
-    image: node:12.16.1
-    group: testing
-    commands:
-      - npm run test:cov
-    depends_on: [kaniko]
+- name: coverage
+  image: node:12.16.1
+  group: testing
+  commands:
+    - npm run test:cov
+  depends_on: [kaniko]
 
-  - name: deploy
-    image: caprover/cli-caprover:latest
-    commands:
-      #- git checkout -b release-${DRONE_TAG}
-      - npx caprover deploy -h $CAPROVER_DOMAIN -p $CAPROVER_PASSWORD -a $CAPROVER_APPNAME -b master
-      #Add -b release-${DRONE_TAG} to push and deploy on tag
-    environment:
-      CAPROVER_DOMAIN:
-        from_secret: CAPROVER_DOMAIN
-      CAPROVER_APPNAME:
-        from_secret: CAPROVER_APPNAME
-      CAPROVER_PASSWORD:
-        from_secret: CAPROVER_PASSWORD
-    depends_on: [testing, lint, coverage, kaniko]
-    #when:
-    #  event: tag
-
-  - name: notify
-    image: appleboy/drone-discord
-    settings:
-      webhook_id:
-        from_secret: DISCORD_WEBHOOK_ID
-      webhook_token:
-        from_secret: DISCORD_WEBHOOK_TOKEN
-      message: "{{#success build.status}} ✅  Build #{{build.number}} of `{{repo.name}}` succeeded.\n\n📝 Commit by {{commit.author}} on `{{commit.branch}}`:\n``` {{commit.message}} ```\n\n🌐 {{ build.link }} {{else}} ❌  Build #{{build.number}} of `{{repo.name}}` failed.\n\n📝 Commit by {{commit.author}} on `{{commit.branch}}`:\n``` {{commit.message}} ```\n🌐 {{ build.link }} {{/success}}\n"
-
-    when:
-      status: [ success, failure ]
-    #  event: tag 
+- name: deploy
+  image: caprover/cli-caprover:latest
+  commands:
+    #- git checkout -b release-${DRONE_TAG}
+    - npx caprover deploy -h $CAPROVER_DOMAIN -p $CAPROVER_PASSWORD -a $CAPROVER_APPNAME -b master
+    #Add -b release-${DRONE_TAG} to push and deploy on tag
+  environment:
+    CAPROVER_DOMAIN:
+      from_secret: CAPROVER_DOMAIN
+    CAPROVER_APPNAME:
+      from_secret: CAPROVER_APPNAME
+    CAPROVER_PASSWORD:
+      from_secret: CAPROVER_PASSWORD
+  depends_on: [testing, lint, coverage, kaniko]
+  #when:
+  #  event: tag
 
 - name: documentation
   image: node:12.16.1
@@ -124,3 +111,15 @@ steps:
     SSH_KEY:
       from_secret: SSH_KEY
   depends_on: [deploy]
+
+- name: notify
+  image: appleboy/drone-discord
+  settings:
+    webhook_id:
+      from_secret: DISCORD_WEBHOOK_ID
+    webhook_token:
+      from_secret: DISCORD_WEBHOOK_TOKEN
+    message: "{{#success build.status}} ✅  Build #{{build.number}} of `{{repo.name}}` succeeded.\n\n📝 Commit by {{commit.author}} on `{{commit.branch}}`:\n``` {{commit.message}} ```\n\n🌐 {{ build.link }} {{else}} ❌  Build #{{build.number}} of `{{repo.name}}` failed.\n\n📝 Commit by {{commit.author}} on `{{commit.branch}}`:\n``` {{commit.message}} ```\n🌐 {{ build.link }} {{/success}}\n"
+
+  when:
+    status: [ success, failure ]
