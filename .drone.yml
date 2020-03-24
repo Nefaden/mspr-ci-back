@@ -59,14 +59,14 @@ steps:
       tags: 0.0.1
     depends_on: [rebuild-cache]
 
-  - name: testing
+  - name: unit-test
     image: node:12.16.1
     group: testing
     commands:
       - npm run test
     depends_on: [kaniko]
 
-  - name: testing e2e
+  - name: e2e-test
     image: node:12.16.1
     group: testing
     environment:
@@ -114,7 +114,7 @@ steps:
         from_secret: CAPROVER_PASSWORD
     when:
       branch: master
-    depends_on: [testing, lint, coverage, kaniko]
+    depends_on: [unit-test, e2e-test, lint, coverage, kaniko]
 
     #when:
     #  event: tag
