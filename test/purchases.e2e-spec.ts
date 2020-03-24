@@ -5,11 +5,17 @@ import { Repository } from 'typeorm';
 import { AppModule } from '../src/app.module';
 import { Customer } from '../src/customers/customer.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { Purchase } from '../src/purchases/purchase.entity';
+import { Product } from '../src/products/product.entity';
 import { getCustomer } from './entity/customer';
+import { getProduct } from './entity/product';
+import { getPurchase } from './entity/purchase';
 
-describe('Customers (e2e)', () => {
+describe('Purchases (e2e)', () => {
   let app: INestApplication;
   let customersRepository: Repository<Customer>;
+  let productsRepository: Repository<Product>;
+  let purchasesRepository: Repository<Purchase>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -20,17 +26,24 @@ describe('Customers (e2e)', () => {
     await app.init();
 
     customersRepository = module.get(getRepositoryToken(Customer));
+    productsRepository = module.get(getRepositoryToken(Product));
+    purchasesRepository = module.get(getRepositoryToken(Purchase));
+
     await customersRepository.save(getCustomer());
+    await productsRepository.save(getProduct());
+    await purchasesRepository.save(getPurchase());
   });
 
-  it('/customers (GET)', () => {
+  it('/purchases (GET)', () => {
     return request(app.getHttpServer())
-      .get('/customers')
+      .get('/purchases')
       .expect(200)
-      .expect([getCustomer()]);
+      .expect([getPurchase()]);
   });
 
   afterEach(() => {
+    purchasesRepository.save(getPurchase());
+    productsRepository.save(getProduct());
     customersRepository.delete(getCustomer());
     app.close();
   });
