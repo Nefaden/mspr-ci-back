@@ -65,7 +65,7 @@ steps:
         from_secret: DOCKER_USERNAME
       Password: 
         from_secret: DOCKER_TOKEN
-    depends_on: [restore-cache]
+    depends_on: [rebuild-cache]
     
   - name: kaniko
     image: banzaicloud/drone-kaniko
