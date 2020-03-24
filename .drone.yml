@@ -51,8 +51,8 @@ steps:
       from_secret: SSH_KEY
   depends_on: [rebuild-cache]
   when:
-    branch:
-    - master
+    #branch:
+    #- master
     event: push
   
 - name: kaniko
