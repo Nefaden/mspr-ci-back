@@ -25,7 +25,7 @@ describe('Customers (e2e)', () => {
     await app.init();
 
     customersRepository = module.get(getRepositoryToken(Customer));
-    customersRepository.save(customer);
+    await customersRepository.save(customer);
   });
 
   it('/customers (GET)', () => {
@@ -35,7 +35,7 @@ describe('Customers (e2e)', () => {
       .expect([customer]);
   });
 
-  afterEach(async () => {
+  afterEach(() => {
     customersRepository.delete(customer);
     app.close();
   });
