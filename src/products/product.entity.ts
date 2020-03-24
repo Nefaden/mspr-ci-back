@@ -23,7 +23,7 @@ export class Product {
     description: 'Product\'s price.'
   })
   @Column({ type: 'numeric', precision: 6, scale: 3 })
-  price: number;  
+  price: string;  
 
   @OneToMany(
     type => Purchase,

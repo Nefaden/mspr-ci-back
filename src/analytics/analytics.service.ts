@@ -24,7 +24,7 @@ export class AnalyticsService {
 
     await this.getPurchasesByYear(year).then(purchases =>
       purchases.forEach(
-        purchase => (total += purchase.quantity * purchase.product.price)
+        purchase => (total += purchase.quantity * +purchase.product.price)
       )
     );
     return +total.toFixed(3);
