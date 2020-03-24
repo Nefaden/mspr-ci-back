@@ -1,11 +1,10 @@
-#.add_ssh: &add_ssh |
-#  mkdir ~/.ssh 
-#  echo $SSH_KEY > ~/.ssh/id_rsa 
-#  chmod 700 ~/.ssh/
-#  chmod 600 ~/.ssh/id_rsa 
-#  ssh-keyscan -t rsa gitlab.com >> ~/.ssh/known_hosts
+.add_ssh: &add_ssh |
+  mkdir ~/.ssh 
+  echo $SSH_KEY > ~/.ssh/id_rsa 
+  chmod 700 ~/.ssh/
+  chmod 600 ~/.ssh/id_rsa 
+  ssh-keyscan -t rsa gitlab.com >> ~/.ssh/known_hosts
 
----
 kind: pipeline
 type: docker
 name: backend
@@ -88,31 +87,11 @@ steps:
   #when:
   #  event: tag 
 
----
-kind: pipeline
-type: docker
-name: documentation
-
-steps:
-- name: restore-cache
-  image: drillster/drone-volume-cache
-  volumes:
-  - name: cache
-    path: /cache
-  settings:
-    restore: true
-    mount:
-      - ./node_modules
-
 - name: documentation
   image: node:12.16.1
   commands:
     - npm run doc
-    - mkdir ~/.ssh 
-    - echo $SSH_KEY > ~/.ssh/id_rsa 
-    - chmod 700 ~/.ssh/
-    - chmod 600 ~/.ssh/id_rsa 
-    - ssh-keyscan -t rsa gitlab.com >> ~/.ssh/known_hosts
+    - *add_ssh
     #- git fetch --tags
     #-  VERSION=$(git describe --abbrev=0 --tag | tr -d '\n')
     - git config --global http.sslverify false
@@ -131,7 +110,3 @@ steps:
       from_secret: DOC_REPOSITORY_URL
     SSH_KEY:
       from_secret: SSH_KEY
-    Username:
-      from_secret: DOCKER_USERNAME
-    Password: 
-      from_secret: DOCKER_TOKEN
