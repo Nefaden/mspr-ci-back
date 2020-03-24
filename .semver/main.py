@@ -20,6 +20,9 @@ PATCH_BUMP = [
     'doc'
 ]
 
+def git(*args):
+    return subprocess.check_output(["git"] + list(args))
+
 def tag_repo(tag):
     url = os.environ["CI_REPOSITORY_URL"]
 
@@ -32,14 +35,6 @@ def tag_repo(tag):
     git("tag", tag)
     git("push", "origin", tag)
 
-def bump(latest):
-    if any(elem in get_prefix(get_branches_on_last_commit())  for elem in MAJOR_BUMP):
-        return semver.bump_major(latest)
-    if any(elem in get_prefix(get_branches_on_last_commit())  for elem in MINOR_BUMP):
-        return semver.bump_minor(latest)
-    if any(elem in get_prefix(get_branches_on_last_commit())  for elem in PATCH_BUMP):
-        return semver.bump_patch(latest)
-
 def get_branches_on_last_commit():
     last_commit = git('log', '--format="%H"', '-n', '1').decode().replace('\"', '').strip()
     stdout_branches = git('branch', '--contains', last_commit).decode().strip().split('\n')
@@ -50,6 +45,14 @@ def get_prefix(branches):
     res = []
     [res.append(branch.split('/')[0]) for branch in branches if branch.split('/')[0] not in res]
     return res
+
+def bump(latest):
+    if any(elem in get_prefix(get_branches_on_last_commit())  for elem in MAJOR_BUMP):
+        return semver.bump_major(latest)
+    if any(elem in get_prefix(get_branches_on_last_commit())  for elem in MINOR_BUMP):
+        return semver.bump_minor(latest)
+    if any(elem in get_prefix(get_branches_on_last_commit())  for elem in PATCH_BUMP):
+        return semver.bump_patch(latest)
 
 def main():
     try:
@@ -69,3 +72,6 @@ def main():
     print(version)
 
     return 0
+
+if __name__ == "__main__":
+    sys.exit(main())
