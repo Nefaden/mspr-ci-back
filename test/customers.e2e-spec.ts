@@ -35,7 +35,7 @@ describe('Customers (e2e)', () => {
       .expect([customer]);
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     customersRepository.delete(customer);
     app.close();
   });
