@@ -7,7 +7,7 @@
 
 kind: pipeline
 type: docker
-name: backend
+name: default
 
 steps:
   - name: restore-cache
@@ -105,6 +105,16 @@ type: docker
 name: documentation
 
 steps:
+  - name: restore-cache
+    image: drillster/drone-volume-cache
+    volumes:
+    - name: cache
+      path: /cache
+    settings:
+      restore: true
+      mount:
+        - ./node_modules
+
   - name: documentation
     image: node:12.16.1
     commands:
