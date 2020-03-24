@@ -11,82 +11,82 @@ type: docker
 name: backend
 
 steps:
-  - name: restore-cache
-    image: drillster/drone-volume-cache
-    volumes:
-    - name: cache
-      path: /cache
-    settings:
-      restore: true
-      mount:
-        - ./node_modules
+- name: restore-cache
+  image: drillster/drone-volume-cache
+  volumes:
+  - name: cache
+    path: /cache
+  settings:
+    restore: true
+    mount:
+      - ./node_modules
 
-  - name: install
-    image: node:12.16.1
-    commands:
-      - npm install
-    depends_on: [restore-cache]
+- name: install
+  image: node:12.16.1
+  commands:
+    - npm install
+  depends_on: [restore-cache]
 
-  - name: rebuild-cache
-    image: drillster/drone-volume-cache
-    volumes:
-    - name: cache
-      path: /cache
-    settings:
-      rebuild: true
-      mount:
-        - ./node_modules
-    depends_on: [install]
-    
-  - name: kaniko
-    image: banzaicloud/drone-kaniko
-    settings:
-      username:
-        from_secret: DOCKER_USERNAME
-      password: 
-        from_secret: DOCKER_TOKEN
-      registry: registry.gitlab.com
-      repo: mspr-ci1/mspr-ci-back
-      tags: 0.0.1
-    depends_on: [rebuild-cache]
+- name: rebuild-cache
+  image: drillster/drone-volume-cache
+  volumes:
+  - name: cache
+    path: /cache
+  settings:
+    rebuild: true
+    mount:
+      - ./node_modules
+  depends_on: [install]
+  
+- name: kaniko
+  image: banzaicloud/drone-kaniko
+  settings:
+    username:
+      from_secret: DOCKER_USERNAME
+    password: 
+      from_secret: DOCKER_TOKEN
+    registry: registry.gitlab.com
+    repo: mspr-ci1/mspr-ci-back
+    tags: 0.0.1
+  depends_on: [rebuild-cache]
 
-  - name: testing
-    image: node:12.16.1
-    group: testing
-    commands:
-      - npm run test
-    depends_on: [kaniko]
+- name: testing
+  image: node:12.16.1
+  group: testing
+  commands:
+    - npm run test
+  depends_on: [kaniko]
 
-  - name: lint
-    image: node:12.16.1
-    group: testing
-    commands:
-      - npm run lint
-    depends_on: [kaniko]
+- name: lint
+  image: node:12.16.1
+  group: testing
+  commands:
+    - npm run lint
+  depends_on: [kaniko]
 
-  - name: coverage
-    image: node:12.16.1
-    group: testing
-    commands:  
-      - npm run test:cov
-    depends_on: [kaniko]
+- name: coverage
+  image: node:12.16.1
+  group: testing
+  commands:  
+    - npm run test:cov
+  depends_on: [kaniko]
 
-  - name: deploy
-    image: caprover/cli-caprover:latest
-    commands:
-      #- git checkout -b release-${DRONE_TAG}
-      - npx caprover deploy -h $CAPROVER_DOMAIN -p $CAPROVER_PASSWORD -a $CAPROVER_APPNAME -b master
-      #Add -b release-${DRONE_TAG} to push and deploy on tag
-    environment:
-      CAPROVER_DOMAIN:
-        from_secret: CAPROVER_DOMAIN
-      CAPROVER_APPNAME:
-        from_secret: CAPROVER_APPNAME
-      CAPROVER_PASSWORD:
-        from_secret: CAPROVER_PASSWORD
-    depends_on: [testing, lint, coverage, kaniko]
-    #when:
-    #  event: tag 
+- name: deploy
+  image: caprover/cli-caprover:latest
+  commands:
+    #- git checkout -b release-${DRONE_TAG}
+    - npx caprover deploy -h $CAPROVER_DOMAIN -p $CAPROVER_PASSWORD -a $CAPROVER_APPNAME -b master
+    #Add -b release-${DRONE_TAG} to push and deploy on tag
+  environment:
+    CAPROVER_DOMAIN:
+      from_secret: CAPROVER_DOMAIN
+    CAPROVER_APPNAME:
+      from_secret: CAPROVER_APPNAME
+    CAPROVER_PASSWORD:
+      from_secret: CAPROVER_PASSWORD
+  depends_on: [testing, lint, coverage, kaniko]
+  #when:
+  #  event: tag 
 
 ---
 kind: pipeline
@@ -94,45 +94,44 @@ type: docker
 name: documentation
 
 steps:
-  - name: restore-cache
-    image: drillster/drone-volume-cache
-    volumes:
-    - name: cache
-      path: /cache
-    settings:
-      restore: true
-      mount:
-        - ./node_modules
+- name: restore-cache
+  image: drillster/drone-volume-cache
+  volumes:
+  - name: cache
+    path: /cache
+  settings:
+    restore: true
+    mount:
+      - ./node_modules
 
-  - name: documentation
-    image: node:12.16.1
-    commands:
-      - npm run doc
-      - mkdir ~/.ssh 
-      - echo $SSH_KEY > ~/.ssh/id_rsa 
-      - chmod 700 ~/.ssh/
-      - chmod 600 ~/.ssh/id_rsa 
-      - ssh-keyscan -t rsa gitlab.com >> ~/.ssh/known_hosts
-      - cat ~/.ssh/id_rsa
-      #- git fetch --tags
-      #-  VERSION=$(git describe --abbrev=0 --tag | tr -d '\n')
-      - git config --global http.sslverify false
-      - git clone git@gitlab.com:mspr-ci1/mspr-ci-back-doc.git
-      - rm -rf mspr-ci-back-doc/docs
-      - mv docs/ mspr-ci-back-doc/
-      - cd mspr-ci-back-doc/
-      - git add docs
-      - git commit -m "Update doc"
-      #- git tag $VERSION
-      - git log
-      - git push 
-      #- git push origin --tags
-    environment:
-      DOC_REPOSITORY_URL:
-        from_secret: DOC_REPOSITORY_URL
-      SSH_KEY:
-        from_secret: SSH_KEY
-      Username:
-        from_secret: DOCKER_USERNAME
-      Password: 
-        from_secret: DOCKER_TOKEN
+- name: documentation
+  image: node:12.16.1
+  commands:
+    - npm run doc
+    - mkdir ~/.ssh 
+    - echo $SSH_KEY > ~/.ssh/id_rsa 
+    - chmod 700 ~/.ssh/
+    - chmod 600 ~/.ssh/id_rsa 
+    - ssh-keyscan -t rsa gitlab.com >> ~/.ssh/known_hosts
+    #- git fetch --tags
+    #-  VERSION=$(git describe --abbrev=0 --tag | tr -d '\n')
+    - git config --global http.sslverify false
+    - git clone git@gitlab.com:mspr-ci1/mspr-ci-back-doc.git
+    - rm -rf mspr-ci-back-doc/docs
+    - mv docs/ mspr-ci-back-doc/
+    - cd mspr-ci-back-doc/
+    - git add docs
+    - git commit -m "Update doc"
+    #- git tag $VERSION
+    - git log
+    - git push 
+    #- git push origin --tags
+  environment:
+    DOC_REPOSITORY_URL:
+      from_secret: DOC_REPOSITORY_URL
+    SSH_KEY:
+      from_secret: SSH_KEY
+    Username:
+      from_secret: DOCKER_USERNAME
+    Password: 
+      from_secret: DOCKER_TOKEN
