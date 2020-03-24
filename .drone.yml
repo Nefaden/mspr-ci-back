@@ -51,8 +51,8 @@ steps:
       from_secret: SSH_KEY
   depends_on: [rebuild-cache]
   when:
-    #branch:
-    #- master
+    branch:
+    - master
     event: push
   
 - name: kaniko
@@ -93,7 +93,6 @@ steps:
   image: caprover/cli-caprover:latest
   commands:
     - git checkout -b release-${DRONE_TAG}
-    - git tag $DRONE_TAG
     - npx caprover deploy -h $CAPROVER_DOMAIN -p $CAPROVER_PASSWORD -a $CAPROVER_APPNAME -b release-${DRONE_TAG}
   environment:
     CAPROVER_DOMAIN:
