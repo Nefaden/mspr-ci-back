@@ -4,7 +4,7 @@ import { Raw, Repository } from 'typeorm';
 import { Purchase } from '../purchases/purchase.entity';
 import { Analytics } from './analytics.class';
 import { GetAnalyticsParams } from './params/analytics.param';
-import { validate, validateOrReject } from 'class-validator';
+import { validateOrReject } from 'class-validator';
 
 @Injectable()
 export class AnalyticsService {
