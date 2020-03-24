@@ -5,7 +5,7 @@ export class Analytics {
     example: '2020',
     description: 'Analytic\'s year.'
   })
-  year: number;
+  year: string;
 
   @ApiProperty({
     example: '129,56',

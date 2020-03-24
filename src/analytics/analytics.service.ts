@@ -15,7 +15,7 @@ export class AnalyticsService {
   async getAnalytics(params: GetAnalyticsParams): Promise<Analytics> {
     return {
       year: params.year,
-      turnover: await this.getTurnover(params.year)
+      turnover: await this.getTurnover(+params.year)
     };
   }
 

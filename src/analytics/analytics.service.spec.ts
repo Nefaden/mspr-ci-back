@@ -34,15 +34,15 @@ describe('Analytics Service', () => {
 
   describe('getAnalytics', () => {
     it('should return analytics for the specified year', async () => {
-      const params: GetAnalyticsParams = { year: 2020 };
+      const params: GetAnalyticsParams = { year: '2020' };
       const purchase1: Purchase = new Purchase();
       purchase1.quantity = 2;
       purchase1.product = new Product();
-      purchase1.product.price = "2";
+      purchase1.product.price = '2';
       const purchase2: Purchase = new Purchase();
       purchase2.quantity = 2;
       purchase2.product = new Product();
-      purchase2.product.price = "2";
+      purchase2.product.price = '2';
       const purchases: Purchase[] = [purchase1, purchase2];
       const result: Analytics = {
         year: params.year,
@@ -54,7 +54,7 @@ describe('Analytics Service', () => {
     });
 
     it('should return analytics for a year with no purchases', async () => {
-      const params: GetAnalyticsParams = { year: 2019 };
+      const params: GetAnalyticsParams = { year: '2019' };
       const purchases: Purchase[] = [];
       const result: Analytics = {
         year: params.year,

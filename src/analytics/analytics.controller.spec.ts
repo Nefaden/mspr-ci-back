@@ -33,7 +33,7 @@ describe('Analytics Controller', () => {
 
   describe('getAnalytics', () => {
     it('should return analytics', async () => {
-      const params: GetAnalyticsParams = { year: 2020 };
+      const params: GetAnalyticsParams = { year: '2020' };
       const result: Analytics = {
         year: params.year,
         turnover: 123.45
