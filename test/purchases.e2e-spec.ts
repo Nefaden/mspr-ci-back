@@ -17,7 +17,7 @@ describe('Purchases (e2e)', () => {
   let productsRepository: Repository<Product>;
   let purchasesRepository: Repository<Purchase>;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [AppModule]
     }).compile();
@@ -41,7 +41,7 @@ describe('Purchases (e2e)', () => {
       .expect([getPurchase()]);
   });
 
-  afterEach(() => {
+  afterAll(async () => {
     purchasesRepository.save(getPurchase());
     productsRepository.save(getProduct());
     customersRepository.delete(getCustomer());

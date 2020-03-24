@@ -11,7 +11,7 @@ describe('Customers (e2e)', () => {
   let app: INestApplication;
   let customersRepository: Repository<Customer>;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [AppModule]
     }).compile();
@@ -30,7 +30,7 @@ describe('Customers (e2e)', () => {
       .expect([getCustomer()]);
   });
 
-  afterEach(() => {
+  afterAll(async () => {
     customersRepository.delete(getCustomer());
     app.close();
   });
