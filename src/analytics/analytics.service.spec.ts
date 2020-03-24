@@ -57,7 +57,7 @@ describe('Analytics Service', () => {
       const params: GetAnalyticsParams = { year: 2019 };
       const purchases: Purchase[] = [];
       const result: Analytics = {
-        year: params.year,
+        year: params.year.toString(),
         turnover: 0
       };
       jest.spyOn(purchaseRepository, 'find').mockResolvedValue(purchases);
