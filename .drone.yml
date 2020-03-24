@@ -5,6 +5,7 @@
   chmod 600 ~/.ssh/id_rsa 
   ssh-keyscan -t rsa gitlab.com >> ~/.ssh/known_hosts
 
+---
 kind: pipeline
 type: docker
 name: default
@@ -87,6 +88,7 @@ steps:
     #when:
     #  event: tag 
 
+---
 kind: pipeline
 type: docker
 name: documentation
