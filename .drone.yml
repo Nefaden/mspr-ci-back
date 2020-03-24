@@ -1,3 +1,4 @@
+---
 .add_ssh: &add_ssh |
   mkdir ~/.ssh 
   echo $SSH_KEY > ~/.ssh/id_rsa 
@@ -5,7 +6,6 @@
   chmod 600 ~/.ssh/id_rsa 
   ssh-keyscan -t rsa gitlab.com >> ~/.ssh/known_hosts
 
----
 kind: pipeline
 type: docker
 name: default
