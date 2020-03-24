@@ -7,7 +7,7 @@
 
 kind: pipeline
 type: docker
-name: default
+name: backend
 
 steps:
   - name: restore-cache
@@ -36,36 +36,6 @@ steps:
       mount:
         - ./node_modules
     depends_on: [install]
-
-  - name: doc
-    image: node:12.16.1
-    commands:
-      - npm run doc
-      - *add_ssh
-      - cat ~/.ssh/id_rsa
-      #- git fetch --tags
-      #-  VERSION=$(git describe --abbrev=0 --tag | tr -d '\n')
-      - git config --global http.sslverify false
-      - git clone git@gitlab.com:mspr-ci1/mspr-ci-back-doc.git
-      - rm -rf mspr-ci-back-doc/docs
-      - mv docs/ mspr-ci-back-doc/
-      - cd mspr-ci-back-doc/
-      - git add docs
-      - git commit -m "Update doc"
-      #- git tag $VERSION
-      - git log
-      - git push 
-      #- git push origin --tags
-    environment:
-      DOC_REPOSITORY_URL:
-        from_secret: DOC_REPOSITORY_URL
-      SSH_KEY:
-        from_secret: SSH_KEY
-      Username:
-        from_secret: DOCKER_USERNAME
-      Password: 
-        from_secret: DOCKER_TOKEN
-    depends_on: [rebuild-cache]
     
   - name: kaniko
     image: banzaicloud/drone-kaniko
@@ -77,7 +47,7 @@ steps:
       registry: registry.gitlab.com
       repo: mspr-ci1/mspr-ci-back
       tags: 0.0.1
-    depends_on: [doc]
+    depends_on: [rebuild-cache]
 
   - name: testing
     image: node:12.16.1
@@ -128,3 +98,38 @@ steps:
 
     when:
       status: [ success, failure ]
+    #  event: tag 
+
+kind: pipeline
+type: docker
+name: documentation
+
+steps:
+  - name: documentation
+    image: node:12.16.1
+    commands:
+      - npm run doc
+      - *add_ssh
+      - cat ~/.ssh/id_rsa
+      #- git fetch --tags
+      #-  VERSION=$(git describe --abbrev=0 --tag | tr -d '\n')
+      - git config --global http.sslverify false
+      - git clone git@gitlab.com:mspr-ci1/mspr-ci-back-doc.git
+      - rm -rf mspr-ci-back-doc/docs
+      - mv docs/ mspr-ci-back-doc/
+      - cd mspr-ci-back-doc/
+      - git add docs
+      - git commit -m "Update doc"
+      #- git tag $VERSION
+      - git log
+      - git push 
+      #- git push origin --tags
+    environment:
+      DOC_REPOSITORY_URL:
+        from_secret: DOC_REPOSITORY_URL
+      SSH_KEY:
+        from_secret: SSH_KEY
+      Username:
+        from_secret: DOCKER_USERNAME
+      Password: 
+        from_secret: DOCKER_TOKEN
