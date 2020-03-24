@@ -27,7 +27,6 @@ def tag_repo(tag):
     # Example input: https://gitlab-ci-token:xxxxxxxxxxxxxxxxxxxx@gitlab.com/threedotslabs/ci-examples.git
     # Example output: git@gitlab.com:threedotslabs/ci-examples.git
     push_url = re.sub(r'.+@([^/]+)/', r'git@\1:', url)
-    print(push_url)
 
     git("remote", "set-url", "--push", "origin", push_url)
     git("tag", tag)
