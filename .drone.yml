@@ -2,6 +2,16 @@ kind: pipeline
 type: docker
 name: default
 
+services:
+- name: postgres
+  image: postgres:10-alpine
+  ports:
+  - 5432
+  environment:
+    POSTGRES_USER: postgres
+    POSTGRES_DB: test
+    POSTGRES_PASSWORD: test
+
 steps:
   - name: install
     image: node:12.12.0
@@ -30,6 +40,24 @@ steps:
     group: testing
     commands:
       - npm run test
+
+  - name: testing e2e
+    image: node:12.12.0
+    group: testing
+    environment:
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: test
+      DATABASE_SCHEMA: public
+      DATABASE_NAME: test
+      XDG_CACHE_HOME: /drone/.cache
+      venv: none
+    cache:
+      mount:
+      - .cache
+    commands:
+      - npm run test:e2e
 
   - name: lint
     image: node:12.12.0
