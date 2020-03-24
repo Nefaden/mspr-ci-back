@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Raw, Repository } from 'typeorm';
 import { Purchase } from '../purchases/purchase.entity';
 import { Analytics } from './analytics.class';
 import { GetAnalyticsParams } from './params/analytics.param';
+import { validate, validateOrReject } from 'class-validator';
 
 @Injectable()
 export class AnalyticsService {
@@ -13,10 +14,16 @@ export class AnalyticsService {
   ) {}
 
   async getAnalytics(params: GetAnalyticsParams): Promise<Analytics> {
-    return {
-      year: params.year,
-      turnover: await this.getTurnover(+params.year)
-    };
+    return await validateOrReject(params)
+      .then(() => this.getTurnover(params.year))
+      .then(turnover => {
+        return {
+          year: params.year.toString(),
+          turnover: turnover
+        };
+      }).catch(() => {
+        throw new BadRequestException()
+      });
   }
 
   private async getTurnover(year: number): Promise<number> {

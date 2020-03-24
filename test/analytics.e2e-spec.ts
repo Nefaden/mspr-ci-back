@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, BadRequestException } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { Repository } from 'typeorm';
 import { AppModule } from '../src/app.module';
@@ -35,18 +35,18 @@ describe('Analytics (e2e)', () => {
     await purchasesRepository.save(getPurchase());
   });
 
-  it('/purchases (GET)', () => {
+  it('/analytics (GET)', () => {
     return request(app.getHttpServer())
       .get('/analytics/2020')
       .expect(200)
       .expect(getAnalytics());
   });
 
-  it('/purchases with wrong parameter (GET)', () => {
+  it('/analytics with wrong parameter (GET)', () => {
     return request(app.getHttpServer())
       .get('/analytics/test')
-      .expect(new BadRequestException().getStatus())
-      .expect(new BadRequestException().getResponse());
+      .expect(400)
+      .expect('{"statusCode":400,"error":"Bad Request"}');
   });
 
   afterAll(async () => {
