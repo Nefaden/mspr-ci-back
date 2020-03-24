@@ -39,7 +39,7 @@ describe('Analytics (e2e)', () => {
     return request(app.getHttpServer())
       .get('/analytics/2020')
       .expect(200)
-      .expect([getAnalytics()]);
+      .expect(getAnalytics());
   });
 
   it('/purchases with wrong parameter (GET)', () => {
