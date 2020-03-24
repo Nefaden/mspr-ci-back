@@ -110,3 +110,4 @@ steps:
       from_secret: DOC_REPOSITORY_URL
     SSH_KEY:
       from_secret: SSH_KEY
+  depends_on: [deploy]
