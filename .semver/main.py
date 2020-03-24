@@ -25,7 +25,7 @@ def git(*args):
 
 def tag_repo(tag):
     url = os.environ["CI_REPOSITORY_URL"]
-
+ 
     # Transforms the repository URL to the SSH URL
     # Example input: https://gitlab-ci-token:xxxxxxxxxxxxxxxxxxxx@gitlab.com/threedotslabs/ci-examples.git
     # Example output: git@gitlab.com:threedotslabs/ci-examples.git
