@@ -36,20 +36,6 @@ steps:
     mount:
       - ./node_modules
   depends_on: [install]
-  
-- name: kaniko
-  image: banzaicloud/drone-kaniko
-  settings:
-    username:
-      from_secret: DOCKER_USERNAME
-    password:
-      from_secret: DOCKER_TOKEN
-    registry: registry.gitlab.com
-    repo: mspr-ci1/mspr-ci-back
-    tags: 
-      - ${DRONE_TAG}
-      - 0.0.1
-  depends_on: [rebuild-cache]
 
 - name: semantic versionning
   image: python:3.7
@@ -63,11 +49,25 @@ steps:
       from_secret: CI_REPOSITORY_URL
     SSH_KEY:
       from_secret: SSH_KEY
-  depends_on: [prisma_generate]
+  depends_on: [rebuild-cache]
   when:
     #branch:
     #- master
     event: push
+  
+- name: kaniko
+  image: banzaicloud/drone-kaniko
+  settings:
+    username:
+      from_secret: DOCKER_USERNAME
+    password:
+      from_secret: DOCKER_TOKEN
+    registry: registry.gitlab.com
+    repo: mspr-ci1/mspr-ci-back
+    tags: 
+      - ${DRONE_TAG}
+      - 0.0.1
+  depends_on: [semantic versionning]
 
 - name: testing
   image: node:12.16.1
