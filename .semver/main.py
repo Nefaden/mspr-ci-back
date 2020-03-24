@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+os.chdir(path)
 import re
 import sys
 import semver
@@ -21,7 +22,10 @@ PATCH_BUMP = [
 ]
 
 def git(*args):
-    return subprocess.check_output(["git"] + list(args))
+    try:
+        output = subprocess.check_output(["git"] + list(args))
+    except subprocess.CalledProcessError as e:
+        print("Exception on process, rc=", e.returncode, "output=", e.output)
 
 def tag_repo(tag):
     url = os.environ["CI_REPOSITORY_URL"]
