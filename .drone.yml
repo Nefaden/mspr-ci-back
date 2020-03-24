@@ -1,14 +1,15 @@
 ---
-.add_ssh: &add_ssh |
-  mkdir ~/.ssh 
-  echo $SSH_KEY > ~/.ssh/id_rsa 
-  chmod 700 ~/.ssh/
-  chmod 600 ~/.ssh/id_rsa 
-  ssh-keyscan -t rsa gitlab.com >> ~/.ssh/known_hosts
+#.add_ssh: &add_ssh |
+#  mkdir ~/.ssh 
+#  echo $SSH_KEY > ~/.ssh/id_rsa 
+#  chmod 700 ~/.ssh/
+#  chmod 600 ~/.ssh/id_rsa 
+#  ssh-keyscan -t rsa gitlab.com >> ~/.ssh/known_hosts
 
+---
 kind: pipeline
 type: docker
-name: default
+name: backend
 
 steps:
   - name: restore-cache
@@ -121,7 +122,11 @@ steps:
     image: node:12.16.1
     commands:
       - npm run doc
-      - *add_ssh
+      - mkdir ~/.ssh 
+      - echo $SSH_KEY > ~/.ssh/id_rsa 
+      - chmod 700 ~/.ssh/
+      - chmod 600 ~/.ssh/id_rsa 
+      - ssh-keyscan -t rsa gitlab.com >> ~/.ssh/known_hosts
       - cat ~/.ssh/id_rsa
       #- git fetch --tags
       #-  VERSION=$(git describe --abbrev=0 --tag | tr -d '\n')
