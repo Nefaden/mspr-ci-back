@@ -9,7 +9,7 @@
 ---
 kind: pipeline
 type: docker
-name: backend
+name: default
 
 steps:
   - name: restore-cache
