@@ -86,7 +86,7 @@ steps:
     depends_on: [kaniko]
 
   - name: lint
-    image: node:12.12.0
+    image: node:12.16.1
     group: testing
     commands:
       - npm run lint
@@ -112,6 +112,8 @@ steps:
         from_secret: CAPROVER_APPNAME
       CAPROVER_PASSWORD:
         from_secret: CAPROVER_PASSWORD
+    when:
+      branch: master
     depends_on: [testing, lint, coverage, kaniko]
 
     #when:
@@ -139,6 +141,8 @@ steps:
         from_secret: DOC_REPOSITORY_URL
       SSH_KEY:
         from_secret: SSH_KEY
+    when:
+      branch: master
     depends_on: [deploy]
 
   - name: notify
