@@ -62,9 +62,9 @@ steps:
     depends_on: [rebuild-cache]
     when:
       branch:
-      - master
+        - master
       event: push
-    
+
   - name: kaniko
     image: banzaicloud/drone-kaniko
     settings:
@@ -74,7 +74,7 @@ steps:
         from_secret: DOCKER_TOKEN
       registry: registry.gitlab.com
       repo: mspr-ci1/mspr-ci-back
-      tags: 
+      tags:
         - ${DRONE_TAG}
     depends_on: [semantic versionning]
 
@@ -118,46 +118,46 @@ steps:
       - npm run test:cov
     depends_on: [kaniko]
 
-- name: deploy
-  image: caprover/cli-caprover:latest
-  commands:
-    - git checkout -b release-${DRONE_TAG}
-    - npx caprover deploy -h $CAPROVER_DOMAIN -p $CAPROVER_PASSWORD -a $CAPROVER_APPNAME -b release-${DRONE_TAG}
-  environment:
-    CAPROVER_DOMAIN:
-      from_secret: CAPROVER_DOMAIN
-    CAPROVER_APPNAME:
-      from_secret: CAPROVER_APPNAME
-    CAPROVER_PASSWORD:
-      from_secret: CAPROVER_PASSWORD
-  when:
-    event: tag
-  depends_on: [unit-test, e2e-test, lint, coverage]
+  - name: deploy
+    image: caprover/cli-caprover:latest
+    commands:
+      - git checkout -b release-${DRONE_TAG}
+      - npx caprover deploy -h $CAPROVER_DOMAIN -p $CAPROVER_PASSWORD -a $CAPROVER_APPNAME -b release-${DRONE_TAG}
+    environment:
+      CAPROVER_DOMAIN:
+        from_secret: CAPROVER_DOMAIN
+      CAPROVER_APPNAME:
+        from_secret: CAPROVER_APPNAME
+      CAPROVER_PASSWORD:
+        from_secret: CAPROVER_PASSWORD
+    when:
+      event: tag
+    depends_on: [unit-test, e2e-test, lint, coverage]
 
-- name: documentation
-  image: node:12.16.1
-  commands:
-    - npm run doc
-    - *add_ssh
-    - git fetch --tags
-    -  VERSION=$(git describe --abbrev=0 --tag | tr -d '\n')
-    - git config --global http.sslverify false
-    - git clone git@gitlab.com:mspr-ci1/mspr-ci-back-doc.git
-    - rm -rf mspr-ci-back-doc/docs
-    - mv docs/ mspr-ci-back-doc/
-    - cd mspr-ci-back-doc/
-    - git add docs
-    - git commit -m "Update doc $VERSION"
-    - git tag $VERSION
-    - git log
-    - git push 
-    - git push origin --tags
-  environment:
-    DOC_REPOSITORY_URL:
-      from_secret: DOC_REPOSITORY_URL
-    SSH_KEY:
-      from_secret: SSH_KEY
-  depends_on: [deploy]
+  - name: documentation
+    image: node:12.16.1
+    commands:
+      - npm run doc
+      - *add_ssh
+      - git fetch --tags
+      - VERSION=$(git describe --abbrev=0 --tag | tr -d '\n')
+      - git config --global http.sslverify false
+      - git clone git@gitlab.com:mspr-ci1/mspr-ci-back-doc.git
+      - rm -rf mspr-ci-back-doc/docs
+      - mv docs/ mspr-ci-back-doc/
+      - cd mspr-ci-back-doc/
+      - git add docs
+      - git commit -m "Update doc $VERSION"
+      - git tag $VERSION
+      - git log
+      - git push
+      - git push origin --tags
+    environment:
+      DOC_REPOSITORY_URL:
+        from_secret: DOC_REPOSITORY_URL
+      SSH_KEY:
+        from_secret: SSH_KEY
+    depends_on: [deploy]
 
   - name: notify
     image: appleboy/drone-discord
