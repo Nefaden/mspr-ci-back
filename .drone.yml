@@ -59,11 +59,11 @@ steps:
         from_secret: CI_REPOSITORY_URL
       SSH_KEY:
         from_secret: SSH_KEY
-    depends_on: [rebuild-cache]
     when:
       branch:
         - master
       event: push
+    depends_on: [rebuild-cache]
 
   - name: kaniko
     image: banzaicloud/drone-kaniko
@@ -157,6 +157,8 @@ steps:
         from_secret: DOC_REPOSITORY_URL
       SSH_KEY:
         from_secret: SSH_KEY
+    when:
+      event: tag
     depends_on: [deploy]
 
   - name: notify
