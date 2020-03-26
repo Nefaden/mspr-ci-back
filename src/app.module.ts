@@ -7,6 +7,7 @@ import { Product } from './products/product.entity';
 import { Purchase } from './purchases/purchase.entity';
 import { PurchasesModule } from './purchases/purchases.module';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
     }),
     AnalyticsModule,
     CustomersModule,
+    ProductsModule,
     PurchasesModule,
   ],
 })
