@@ -9,6 +9,16 @@ kind: pipeline
 type: docker
 name: default
 
+services:
+  - name: postgres
+    image: postgres:10-alpine
+    ports:
+      - 5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: test
+      POSTGRES_PASSWORD: test
+
 steps:
   - name: restore-cache
     image: drillster/drone-volume-cache
@@ -59,9 +69,9 @@ steps:
     image: banzaicloud/drone-kaniko
     settings:
       username:
-        from_secret: GITLAB_USERNAME
+        from_secret: DOCKER_USERNAME
       password:
-        from_secret: GITLAB_TOKEN
+        from_secret: DOCKER_TOKEN
       registry: registry.gitlab.com
       repo: mspr-ci1/mspr-ci-back
       tags:
