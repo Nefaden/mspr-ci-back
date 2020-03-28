@@ -35,7 +35,7 @@ describe('Analytics Controller', () => {
     it('should return analytics', async () => {
       const params: GetAnalyticsParams = { year: 2020 };
       const result: Analytics = {
-        year: params.year,
+        year: params.year.toString(),
         turnover: 123.45
       };
       jest.spyOn(analyticsService, 'getAnalytics').mockResolvedValue(result);

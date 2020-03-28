@@ -13,7 +13,7 @@ export class Purchase {
   id: string;
 
   @ApiProperty({
-    example: '2',
+    example: '2.4',
     description: 'Purchase\'s quantity.'
   })
   @Column('int')

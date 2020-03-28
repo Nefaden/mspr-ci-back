@@ -9,135 +9,166 @@ kind: pipeline
 type: docker
 name: default
 
+services:
+  - name: postgres
+    image: postgres:10-alpine
+    ports:
+      - 5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: test
+      POSTGRES_PASSWORD: test
+
 steps:
-- name: restore-cache
-  image: drillster/drone-volume-cache
-  volumes:
-  - name: cache
-    path: /cache
-  settings:
-    restore: true
-    mount:
-      - ./node_modules
+  - name: restore-cache
+    image: drillster/drone-volume-cache
+    volumes:
+      - name: cache
+        path: /cache
+    settings:
+      restore: true
+      mount:
+        - ./node_modules
 
-- name: install
-  image: node:12.16.1
-  commands:
-    - npm install
-  depends_on: [restore-cache]
+  - name: install
+    image: node:12.16.1
+    commands:
+      - npm install
+    depends_on: [restore-cache]
 
-- name: rebuild-cache
-  image: drillster/drone-volume-cache
-  volumes:
-  - name: cache
-    path: /cache
-  settings:
-    rebuild: true
-    mount:
-      - ./node_modules
-  depends_on: [install]
+  - name: rebuild-cache
+    image: drillster/drone-volume-cache
+    volumes:
+      - name: cache
+        path: /cache
+    settings:
+      rebuild: true
+      mount:
+        - ./node_modules
+    depends_on: [install]
 
-- name: semantic versionning
-  image: python:3.7
-  commands:
-    - mkdir ~/.ssh
-    - echo $SSH_KEY > ~/.ssh/id_rsa
-    - pip install -r .semver/requirement.txt
-    - python .semver/main.py
-  environment:
-    CI_REPOSITORY_URL:
-      from_secret: CI_REPOSITORY_URL
-    SSH_KEY:
-      from_secret: SSH_KEY
-  depends_on: [rebuild-cache]
-  when:
-    branch:
-    - master
-    event: push
-  
-- name: kaniko
-  image: banzaicloud/drone-kaniko
-  settings:
-    username:
-      from_secret: DOCKER_USERNAME
-    password:
-      from_secret: DOCKER_TOKEN
-    registry: registry.gitlab.com
-    repo: mspr-ci1/mspr-ci-back
-    tags: 
-      - ${DRONE_TAG}
-  depends_on: [semantic versionning]
+  - name: semantic versionning
+    image: python:3.7
+    commands:
+      - mkdir ~/.ssh
+      - echo $SSH_KEY > ~/.ssh/id_rsa
+      - pip install -r .semver/requirement.txt
+      - python .semver/main.py
+    environment:
+      CI_REPOSITORY_URL:
+        from_secret: CI_REPOSITORY_URL
+      SSH_KEY:
+        from_secret: SSH_KEY
+    when:
+      branch:
+        - master
+      event: push
+    depends_on: [rebuild-cache]
 
-- name: testing
-  image: node:12.16.1
-  group: testing
-  commands:
-    - npm run test
-  depends_on: [kaniko]
+  - name: kaniko
+    image: banzaicloud/drone-kaniko
+    settings:
+      username:
+        from_secret: GITLAB_USERNAME
+      password:
+        from_secret: GITLAB_TOKEN
+      registry: registry.gitlab.com
+      repo: mspr-ci1/mspr-ci-back
+      tags:
+        - ${DRONE_TAG}
+    depends_on: [semantic versionning]
 
-- name: lint
-  image: node:12.16.1
-  group: testing
-  commands:
-    - npm run lint
-  depends_on: [kaniko]
+  - name: unit-test
+    image: node:12.16.1
+    group: testing
+    commands:
+      - npm run test
+    depends_on: [kaniko]
 
-- name: coverage
-  image: node:12.16.1
-  group: testing
-  commands:
-    - npm run test:cov
-  depends_on: [kaniko]
+  - name: e2e-test
+    image: node:12.16.1
+    group: testing
+    environment:
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: test
+      DATABASE_SCHEMA: public
+      DATABASE_NAME: test
+      XDG_CACHE_HOME: /drone/.cache
+      venv: none
+    cache:
+      mount:
+        - .cache
+    commands:
+      - npm run test:e2e
+    depends_on: [kaniko]
 
-- name: deploy
-  image: caprover/cli-caprover:latest
-  commands:
-    - git checkout -b release-${DRONE_TAG}
-    - npx caprover deploy -h $CAPROVER_DOMAIN -p $CAPROVER_PASSWORD -a $CAPROVER_APPNAME -b release-${DRONE_TAG}
-  environment:
-    CAPROVER_DOMAIN:
-      from_secret: CAPROVER_DOMAIN
-    CAPROVER_APPNAME:
-      from_secret: CAPROVER_APPNAME
-    CAPROVER_PASSWORD:
-      from_secret: CAPROVER_PASSWORD
-  depends_on: [testing, lint, coverage, kaniko]
-  when:
-    event: tag
+  - name: lint
+    image: node:12.16.1
+    group: testing
+    commands:
+      - npm run lint
+    depends_on: [kaniko]
 
-- name: documentation
-  image: node:12.16.1
-  commands:
-    - npm run doc
-    - *add_ssh
-    - git fetch --tags
-    -  VERSION=$(git describe --abbrev=0 --tag | tr -d '\n')
-    - git config --global http.sslverify false
-    - git clone git@gitlab.com:mspr-ci1/mspr-ci-back-doc.git
-    - rm -rf mspr-ci-back-doc/docs
-    - mv docs/ mspr-ci-back-doc/
-    - cd mspr-ci-back-doc/
-    - git add docs
-    - git commit -m "Update doc $VERSION"
-    - git tag $VERSION
-    - git log
-    - git push 
-    - git push origin --tags
-  environment:
-    DOC_REPOSITORY_URL:
-      from_secret: DOC_REPOSITORY_URL
-    SSH_KEY:
-      from_secret: SSH_KEY
-  depends_on: [deploy]
+  - name: coverage
+    image: node:12.16.1
+    group: testing
+    commands:
+      - npm run test:cov
+    depends_on: [kaniko]
 
-- name: notify
-  image: appleboy/drone-discord
-  settings:
-    webhook_id:
-      from_secret: DISCORD_WEBHOOK_ID
-    webhook_token:
-      from_secret: DISCORD_WEBHOOK_TOKEN
-    message: "{{#success build.status}} ✅  Build #{{build.number}} of `{{repo.name}}` succeeded.\n\n📝 Commit by {{commit.author}} on `{{commit.branch}}`:\n``` {{commit.message}} ```\n\n🌐 {{ build.link }} {{else}} ❌  Build #{{build.number}} of `{{repo.name}}` failed.\n\n📝 Commit by {{commit.author}} on `{{commit.branch}}`:\n``` {{commit.message}} ```\n🌐 {{ build.link }} {{/success}}\n"
-  when:
-    status: [ success, failure ]
-  depends_on: [documentation]
+  - name: deploy
+    image: caprover/cli-caprover:latest
+    commands:
+      - git checkout -b release-${DRONE_TAG}
+      - npx caprover deploy -h $CAPROVER_DOMAIN -p $CAPROVER_PASSWORD -a $CAPROVER_APPNAME -b release-${DRONE_TAG}
+    environment:
+      CAPROVER_DOMAIN:
+        from_secret: CAPROVER_DOMAIN
+      CAPROVER_APPNAME:
+        from_secret: CAPROVER_APPNAME
+      CAPROVER_PASSWORD:
+        from_secret: CAPROVER_PASSWORD
+    when:
+      event: tag
+    depends_on: [unit-test, e2e-test, lint, coverage]
+
+  - name: documentation
+    image: node:12.16.1
+    commands:
+      - npm run doc
+      - *add_ssh
+      - git fetch --tags
+      - VERSION=$(git describe --abbrev=0 --tag | tr -d '\n')
+      - git config --global http.sslverify false
+      - git clone git@gitlab.com:mspr-ci1/mspr-ci-back-doc.git
+      - rm -rf mspr-ci-back-doc/docs
+      - mv docs/ mspr-ci-back-doc/
+      - cd mspr-ci-back-doc/
+      - git add docs
+      - git commit -m "Update doc $VERSION"
+      - git tag $VERSION
+      - git log
+      - git push
+      - git push origin --tags
+    environment:
+      DOC_REPOSITORY_URL:
+        from_secret: DOC_REPOSITORY_URL
+      SSH_KEY:
+        from_secret: SSH_KEY
+    when:
+      event: tag
+    depends_on: [deploy]
+
+  - name: notify
+    image: appleboy/drone-discord
+    settings:
+      webhook_id:
+        from_secret: DISCORD_WEBHOOK_ID
+      webhook_token:
+        from_secret: DISCORD_WEBHOOK_TOKEN
+      message: "{{#success build.status}} ✅  Build #{{build.number}} of `{{repo.name}}` succeeded.\n\n📝 Commit by {{commit.author}} on `{{commit.branch}}`:\n``` {{commit.message}} ```\n\n🌐 {{ build.link }} {{else}} ❌  Build #{{build.number}} of `{{repo.name}}` failed.\n\n📝 Commit by {{commit.author}} on `{{commit.branch}}`:\n``` {{commit.message}} ```\n🌐 {{ build.link }} {{/success}}\n"
+    when:
+      status: [success, failure]
+    depends_on: [documentation]

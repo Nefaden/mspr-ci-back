@@ -38,14 +38,14 @@ describe('Analytics Service', () => {
       const purchase1: Purchase = new Purchase();
       purchase1.quantity = 2;
       purchase1.product = new Product();
-      purchase1.product.price = 2;
+      purchase1.product.price = '2';
       const purchase2: Purchase = new Purchase();
       purchase2.quantity = 2;
       purchase2.product = new Product();
-      purchase2.product.price = 2;
+      purchase2.product.price = '2';
       const purchases: Purchase[] = [purchase1, purchase2];
       const result: Analytics = {
-        year: params.year,
+        year: params.year.toString(),
         turnover: 8
       };
       jest.spyOn(purchaseRepository, 'find').mockResolvedValue(purchases);
@@ -57,7 +57,7 @@ describe('Analytics Service', () => {
       const params: GetAnalyticsParams = { year: 2019 };
       const purchases: Purchase[] = [];
       const result: Analytics = {
-        year: params.year,
+        year: params.year.toString(),
         turnover: 0
       };
       jest.spyOn(purchaseRepository, 'find').mockResolvedValue(purchases);
