@@ -35,6 +35,7 @@ lerna-debug.log*
 
 #Environment variable
 .env
+/test.txt
 
 #Documentation files
 /docs
