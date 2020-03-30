@@ -147,8 +147,8 @@ steps:
       - mv docs/ mspr-ci-back-doc/
       - cd mspr-ci-back-doc/
       - git add docs
-      - git commit -m "Update doc $VERSION"
-      - git tag $VERSION
+      - git commit -m "Update doc 2.0.0"
+      - git tag 2.0.0
       - git log
       - git push
       - git push origin --tags
